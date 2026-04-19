@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: wyssembh/pharmacie-db:latest
+    container_name: pharmacie-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pharmacie
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./pharmacie.sql:/docker-entrypoint-initdb.d/pharmacie.sql
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    image: wyssembh/pharmacie-app:latest
+    container_name: pharmacie-app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DISPLAY: ${DISPLAY}
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ~/.m2:/root/.m2
+    network_mode: host
+
+volumes:
+  mysql_data:

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="454.0" prefWidth="803.0" stylesheets="@login_register.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Login_Register.Login_registerController">
+   <children>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <AnchorPane fx:id="login_form" prefHeight="480.0" prefWidth="827.0" stylesheets="@login_register.css">
+               <children>
+                  <TextField fx:id="login_username" layoutX="54.0" layoutY="169.0" prefHeight="26.0" prefWidth="302.0" promptText="Username" />
+                  <PasswordField fx:id="login_password" layoutX="54.0" layoutY="227.0" prefHeight="26.0" prefWidth="302.0" promptText="Password" />
+                  <TextField fx:id="login_ShowPassword" layoutX="54.0" layoutY="227.0" prefHeight="26.0" prefWidth="302.0" promptText="Password" visible="false" />
+                  <CheckBox fx:id="login_selectShowPassword" layoutX="54.0" layoutY="271.0" mnemonicParsing="false" onAction="#showPassword" text="Show Password" />
+                  <Button fx:id="login_btn" layoutX="214.0" layoutY="308.0" mnemonicParsing="false" onAction="#login" prefHeight="26.0" prefWidth="141.0" text="Log In" />
+                  <Button fx:id="login_createAccount" layoutX="214.0" layoutY="363.0" mnemonicParsing="false" onMouseClicked="#seDeplacer" prefHeight="26.0" prefWidth="142.0" text="Sign up" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="signup_form" layoutX="7.0" layoutY="14.0" prefHeight="480.0" prefWidth="792.0" stylesheets="@login_register.css" visible="false">
+               <children>
+                  <PasswordField fx:id="signup_cPassword" layoutX="54.0" layoutY="263.0" prefHeight="26.0" prefWidth="302.0" promptText="Confirm Password" />
+                  <Button fx:id="signup_btn" layoutX="214.0" layoutY="308.0" mnemonicParsing="false" onAction="#register" prefHeight="26.0" prefWidth="141.0" text="Sign up" />
+                  <Button fx:id="signup_loginAccount" layoutX="213.0" layoutY="351.0" mnemonicParsing="false" onMouseClicked="#redirectSingIn" prefHeight="26.0" prefWidth="142.0" text="Sign In" />
+                  <TextField fx:id="signup_username" layoutX="54.0" layoutY="188.0" prefHeight="26.0" prefWidth="302.0" promptText="Username" />
+                  <TextField fx:id="signup_email" layoutX="54.0" layoutY="151.0" prefHeight="26.0" prefWidth="302.0" promptText="Email adress" />
+                  <PasswordField fx:id="signup_password" layoutX="54.0" layoutY="226.0" prefHeight="26.0" prefWidth="302.0" promptText="Password" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+   </children>
+</StackPane>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="559.0" prefWidth="1001.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.TableViewController">
+    <stylesheets>
+        <URL value="@tableview.css" />
+    </stylesheets>
+   <children>
+      <TableView fx:id="TablePatients" layoutX="319.0" layoutY="154.0" prefHeight="294.0" prefWidth="645.0">
+        <columns>
+            <TableColumn fx:id="idCol" prefWidth="75.0" text="ID" visible="false" />
+          <TableColumn fx:id="NameCol" prefWidth="148.0" text="Nom" />
+          <TableColumn fx:id="PrenomCol" prefWidth="154.39996337890625" text="Prénom" />
+            <TableColumn fx:id="TelCol" prefWidth="159.2000732421875" text="Téléphone" />
+            <TableColumn fx:id="AdresseCol" minWidth="0.0" prefWidth="187.199951171875" text="Adresse" />
+            
+              </columns>
+      </TableView>
+      <Pane layoutY="100.0" prefHeight="5.0" prefWidth="200.0" style="-fx-background-color: black;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+      <Pane layoutX="12.0" layoutY="154.0" prefHeight="294.0" prefWidth="298.0" style="-fx-background-color: white;">
+         <children>
+            <Label layoutX="36.0" layoutY="14.0" text="Nom" />
+            <Label layoutX="34.0" layoutY="118.0" text="Téléphone" />
+            <Label layoutX="37.0" layoutY="170.0" text="Adresse" />
+            <Label layoutX="37.0" layoutY="66.0" text="Prénom" />
+            <TextField fx:id="txtNom" layoutX="36.0" layoutY="31.0" prefHeight="25.0" prefWidth="204.0" />
+            <TextField fx:id="txtPrenom" layoutX="36.0" layoutY="83.0" prefHeight="25.0" prefWidth="204.0" />
+            <TextField fx:id="txtTel" layoutX="36.0" layoutY="135.0" prefHeight="25.0" prefWidth="204.0" />
+            <TextField fx:id="txtAdresse" layoutX="36.0" layoutY="194.0" prefHeight="25.0" prefWidth="204.0" />
+            <ComboBox fx:id="cmbMedicaments" layoutX="36.0" layoutY="249.0" prefHeight="25.0" prefWidth="204.0" visible="false" />
+            <Label fx:id="MedLabel" layoutX="37.0" layoutY="226.0" text="Medicament" visible="false" />
+         </children>
+      </Pane>
+      <Button fx:id="btnAdd" layoutX="42.0" layoutY="462.0" mnemonicParsing="false" onAction="#Ajouter" prefHeight="26.0" prefWidth="118.0" style="-fx-background-color: green;" text="Ajouter" textFill="WHITE" />
+      <Button fx:id="btnUpdate" layoutX="300.0" layoutY="462.0" mnemonicParsing="false" onAction="#Modifier" prefHeight="26.0" prefWidth="118.0" style="-fx-background-color: gold;" text="Modifier" textFill="WHITE" />
+      <Button fx:id="btnDelete" layoutX="428.0" layoutY="462.0" mnemonicParsing="false" onAction="#Supprimer" prefHeight="26.0" prefWidth="118.0" style="-fx-background-color: red;" text="Supprimer" textFill="WHITE" />
+      <Button fx:id="VoirMed" layoutX="832.0" layoutY="114.0" mnemonicParsing="false" onAction="#Redirect" prefHeight="26.0" prefWidth="145.0" style="-fx-background-color: green;" text="Détails Medicaments" textFill="WHITE" />
+      <Button fx:id="btnAddMed" layoutX="172.0" layoutY="462.0" mnemonicParsing="false" onAction="#AjouterMedicament" prefHeight="26.0" prefWidth="118.0" style="-fx-background-color: green;" text="Ajouter Med" textFill="WHITE" visible="false" />
+      <Button fx:id="afficherMed" layoutX="172.0" layoutY="462.0" mnemonicParsing="false" onAction="#AfficherAjouterMedicament" prefHeight="26.0" prefWidth="118.0" style="-fx-background-color: green;" text="Ajouter Med " textFill="WHITE" />
+      <Button fx:id="vlMed" layoutX="558.0" layoutY="462.0" mnemonicParsing="false" onAction="#Lister" prefHeight="26.0" prefWidth="118.0" style="-fx-background-color: green;" text="Voir liste Med" textFill="WHITE" />
+      <AnchorPane fx:id="ListeMedicaments" prefHeight="559.0" prefWidth="1001.0" styleClass="root2" stylesheets="@tableview.css" visible="false">
+         <children>
+            <TextField fx:id="ListeNom" layoutX="100.0" layoutY="160.0" prefHeight="26.0" prefWidth="387.0" />
+            <TextField fx:id="ListePrenom" layoutX="100.0" layoutY="228.0" prefHeight="26.0" prefWidth="387.0" />
+            <Label layoutX="99.0" layoutY="118.0" prefHeight="18.0" prefWidth="94.0" text="Nom Patient :" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label layoutX="99.0" layoutY="199.0" prefHeight="20.0" prefWidth="102.0" text="Prénom Patient :" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="ComboMed" layoutX="96.0" layoutY="307.0" prefHeight="26.0" prefWidth="387.0" />
+            <Label layoutX="94.0" layoutY="278.0" prefHeight="20.0" prefWidth="167.0" text="Liste Médicaments :" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Button fx:id="btnRetour" layoutX="364.0" layoutY="424.0" mnemonicParsing="false" onAction="#RetourPatient" prefHeight="26.0" prefWidth="126.0" style="-fx-background-color: gold;" text="Détails Patient" textFill="WHITE" />
+            <Button fx:id="btnSuppMed" layoutX="206.0" layoutY="424.0" mnemonicParsing="false" onAction="#onCLick" prefHeight="26.0" prefWidth="146.0" style="-fx-background-color: red;" text="Supprimer Médicament" textFill="WHITE" />
+         </children>
+      </AnchorPane>
+      <Button fx:id="buttonLogout" layoutX="858.0" layoutY="520.0" mnemonicParsing="false" onAction="#handleButtonLogout" style="-fx-background-color: red;" text="Déconnexion" textFill="WHITE" />
+      <Button fx:id="buttonAcc" layoutX="694.0" layoutY="114.0" mnemonicParsing="false" onAction="#goAccueil" prefHeight="26.0" prefWidth="118.0" style="-fx-background-color: blue;" text="accueil" textFill="WHITE" />
+   </children>
+</AnchorPane>

@@ -1,0 +1,8 @@
+.root{
+    -fx-background-image: url('../Images/3.png');
+    -fx-background-size: cover;
+}
+.root2{
+    -fx-background-image: url('../Images/tableback.png');
+    -fx-background-size: cover;
+}

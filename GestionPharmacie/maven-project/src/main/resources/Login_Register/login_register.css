@@ -1,0 +1,8 @@
+.root{
+    -fx-background-image: url('../Images/authentifier.png');
+    -fx-background-size: cover;
+}
+.btn{
+      -fx-background-color: #2E8B57;
+      -fx-background-radius: 5px;
+}
