@@ -42,6 +42,8 @@
             <Button fx:id="btnUpdate" layoutX="208.0" layoutY="462.0" mnemonicParsing="false" onAction="#Modifier" prefHeight="26.0" prefWidth="118.0" style="-fx-background-color: gold;" text="Modifier" textFill="WHITE" />
             <Button fx:id="btnDelete" layoutX="341.0" layoutY="462.0" mnemonicParsing="false" onAction="#Supprimer" prefHeight="26.0" prefWidth="118.0" style="-fx-background-color: red;" text="Supprimer" textFill="WHITE" />
             <Button fx:id="VoirPat" layoutX="811.0" layoutY="113.0" mnemonicParsing="false" onAction="#Redirect" prefHeight="26.0" prefWidth="161.0" style="-fx-background-color: green;" text="DétailsPatient" textFill="WHITE" />
+            <Label layoutX="448.0" layoutY="118.0" text="Recherche médicament (nom)" textFill="WHITE" />
+            <TextField fx:id="txtSearchMedicament" layoutX="620.0" layoutY="114.0" prefHeight="26.0" prefWidth="175.0" promptText="Nom médicament" />
          </children>
       </AnchorPane>
    </children>

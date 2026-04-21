@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,55 +77,129 @@ public class MedicamentController implements Initializable {
 
     @FXML
     private TextField txtQte;
+    
+    @FXML
+    private TextField txtSearchMedicament;
 
   
     @FXML
     void Ajouter() {
-  
-         String nom=txtNom.getText();
-         String quanite=txtQte.getText();
-         int Qte = Integer.parseInt(quanite);
-         String date=String.valueOf(txtDate.getValue());
-        AlertMessage alert=new AlertMessage();
-    try { 
-         prepare=con.prepareStatement("insert into medicament (nom,qte,dateexpiration) values (?,?,?)");
-         prepare.setString(1, nom);
-         prepare.setInt(2, Qte);
-         prepare.setString(3, date);
-         prepare.executeUpdate();
-         alert.sucessMessage("Ajouté avec succés");
-         table();
-         clearForm();
-     } catch (SQLException ex) {
-         Logger.getLogger(MedicamentController.class.getName()).log(Level.SEVERE, null, ex);
-     }
-        
+        AlertMessage alert = new AlertMessage();
+        String nom = txtNom.getText() == null ? "" : txtNom.getText().trim();
+        String quantite = txtQte.getText() == null ? "" : txtQte.getText().trim();
+        LocalDate date = txtDate.getValue();
 
+        if (nom.isEmpty() || quantite.isEmpty() || date == null) {
+            alert.errorMessage("Tous les champs sont obligatoires.");
+            return;
+        }
+
+        int qte;
+        try {
+            qte = Integer.parseInt(quantite);
+        } catch (NumberFormatException e) {
+            alert.errorMessage("La quantité doit être un nombre valide.");
+            return;
+        }
+
+        if (qte < 0) {
+            alert.errorMessage("La quantité ne peut pas être négative.");
+            return;
+        }
+
+        if (!date.isAfter(LocalDate.now())) {
+            alert.errorMessage("La date d'expiration doit être supérieure à aujourd'hui.");
+            return;
+        }
+
+        try {
+            con = LaConnexion.seConnecter();
+            if (con == null) {
+                alert.errorMessage("Connexion base de données indisponible.");
+                return;
+            }
+
+            if (medicamentNameExists(nom, null)) {
+                alert.errorMessage("Un médicament avec ce nom existe déjà.");
+                return;
+            }
+
+            prepare = con.prepareStatement("insert into medicament (nom,qte,dateexpiration) values (?,?,?)");
+            prepare.setString(1, nom);
+            prepare.setInt(2, qte);
+            prepare.setString(3, date.toString());
+            prepare.executeUpdate();
+            alert.sucessMessage("Ajouté avec succès");
+            table();
+            clearForm();
+            showLowStockAlerts();
+        } catch (SQLException ex) {
+            Logger.getLogger(MedicamentController.class.getName()).log(Level.SEVERE, null, ex);
+            alert.errorMessage("Erreur lors de l'ajout du médicament.");
+        }
     }
 
    @FXML
     void Modifier() {
-   int myIndex = TableMedicaments.getSelectionModel().getSelectedIndex();
-   int id = Integer.parseInt(String.valueOf(TableMedicaments.getItems().get(myIndex).getId()));
-        String nom = txtNom.getText();
-        String quanite=txtQte.getText();
-        int Qte = Integer.parseInt(quanite);
-        String date=String.valueOf(txtDate.getValue());
+        AlertMessage alert = new AlertMessage();
+        int myIndex = TableMedicaments.getSelectionModel().getSelectedIndex();
+        if (myIndex < 0) {
+            alert.errorMessage("Veuillez sélectionner un médicament.");
+            return;
+        }
+        int id = Integer.parseInt(String.valueOf(TableMedicaments.getItems().get(myIndex).getId()));
+        String nom = txtNom.getText() == null ? "" : txtNom.getText().trim();
+        String quantite = txtQte.getText() == null ? "" : txtQte.getText().trim();
+        LocalDate date = txtDate.getValue();
+
+        if (nom.isEmpty() || quantite.isEmpty() || date == null) {
+            alert.errorMessage("Tous les champs sont obligatoires.");
+            return;
+        }
+
+        int qte;
+        try {
+            qte = Integer.parseInt(quantite);
+        } catch (NumberFormatException e) {
+            alert.errorMessage("La quantité doit être un nombre valide.");
+            return;
+        }
+
+        if (qte < 0) {
+            alert.errorMessage("La quantité ne peut pas être négative.");
+            return;
+        }
+
+        if (!date.isAfter(LocalDate.now())) {
+            alert.errorMessage("La date d'expiration doit être supérieure à aujourd'hui.");
+            return;
+        }
 
         try {
+            con = LaConnexion.seConnecter();
+            if (con == null) {
+                alert.errorMessage("Connexion base de données indisponible.");
+                return;
+            }
+
+            if (medicamentNameExists(nom, id)) {
+                alert.errorMessage("Un médicament avec ce nom existe déjà.");
+                return;
+            }
+
             prepare = con.prepareStatement("update medicament set nom = ?, qte = ?, dateexpiration = ? where id = ?");
             prepare.setString(1, nom);
-            prepare.setInt(2, Qte);
-            prepare.setString(3, date);
+            prepare.setInt(2, qte);
+            prepare.setString(3, date.toString());
             prepare.setInt(4, id);
             prepare.executeUpdate();
-            AlertMessage alert = new AlertMessage();
             alert.sucessMessage("Modifié avec succès");
             table(); 
             clearForm();
+            showLowStockAlerts();
         } catch (SQLException ex) {
            Logger.getLogger(MedicamentController.class.getName()).log(Level.SEVERE, null, ex);
-            ex.printStackTrace();
+           alert.errorMessage("Erreur lors de la modification du médicament.");
         }
     
 }
@@ -132,8 +207,12 @@ public class MedicamentController implements Initializable {
 
     @FXML
     void Supprimer() {
-   
-     int myIndex = TableMedicaments.getSelectionModel().getSelectedIndex();
+        AlertMessage alert = new AlertMessage();
+        int myIndex = TableMedicaments.getSelectionModel().getSelectedIndex();
+        if (myIndex < 0) {
+            alert.errorMessage("Veuillez sélectionner un médicament.");
+            return;
+        }
          
      int id = Integer.parseInt(String.valueOf(TableMedicaments.getItems().get(myIndex).getId()));
              
@@ -143,7 +222,6 @@ public class MedicamentController implements Initializable {
             prepare.setInt(1, id);
             prepare.executeUpdate();
             
-            AlertMessage alert = new AlertMessage();
             alert.sucessMessage("Supprimé avec succés");
             table();
             clearForm();
@@ -163,15 +241,22 @@ public class MedicamentController implements Initializable {
     ObservableList<Medicament> MedicamentList= FXCollections.observableArrayList();
     @FXML
    
-    public void table()
-      {
+    public void table() {
+        table(txtSearchMedicament != null ? txtSearchMedicament.getText() : null);
+    }
+    
+    public void table(String searchTerm) {
           con=LaConnexion.seConnecter();
         
        try 
        {
          MedicamentList.clear();
-         query="select * from medicament";
+         boolean hasSearch = searchTerm != null && !searchTerm.trim().isEmpty();
+         query = hasSearch ? "select * from medicament where lower(nom) like ? order by id desc" : "select * from medicament order by id desc";
          prepare=con.prepareStatement(query);
+         if (hasSearch) {
+             prepare.setString(1, "%" + searchTerm.trim().toLowerCase() + "%");
+         }
          result=prepare.executeQuery();
       {
         while (result.next())
@@ -204,8 +289,12 @@ public class MedicamentController implements Initializable {
                    txtNom.setText(TableMedicaments.getItems().get(myIndex).getNom());
                    txtQte.setText(String.valueOf(TableMedicaments.getItems().get(myIndex).getQte()));
                    String dateString = TableMedicaments.getItems().get(myIndex).getDate();
-                    LocalDate date = LocalDate.parse(dateString); // Assuming the format of dateString is compatible with ISO_LOCAL_DATE
-                   txtDate.setValue(date);
+                    try {
+                        LocalDate date = LocalDate.parse(dateString);
+                        txtDate.setValue(date);
+                    } catch (DateTimeParseException ex) {
+                        txtDate.setValue(LocalDate.now().plusDays(1));
+                    }
 
 
                    
@@ -242,9 +331,53 @@ public class MedicamentController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //loadData();
         table();
+        if (txtDate != null) {
+            txtDate.setValue(LocalDate.now().plusDays(1));
+        }
+        if (txtSearchMedicament != null) {
+            txtSearchMedicament.textProperty().addListener((obs, oldV, newV) -> table(newV));
+        }
+        showLowStockAlerts();
     }    
+    
+    private boolean medicamentNameExists(String nom, Integer excludeId) throws SQLException {
+        String sql = excludeId == null
+                ? "select count(*) as total from medicament where lower(nom)=lower(?)"
+                : "select count(*) as total from medicament where lower(nom)=lower(?) and id <> ?";
+        PreparedStatement stmt = con.prepareStatement(sql);
+        stmt.setString(1, nom);
+        if (excludeId != null) {
+            stmt.setInt(2, excludeId);
+        }
+        ResultSet rs = stmt.executeQuery();
+        return rs.next() && rs.getInt("total") > 0;
+    }
+    
+    private void showLowStockAlerts() {
+        try {
+            con = LaConnexion.seConnecter();
+            if (con == null) {
+                return;
+            }
+            PreparedStatement stmt = con.prepareStatement(
+                    "select nom, qte from medicament where qte <= 10 order by qte asc, nom asc");
+            ResultSet rs = stmt.executeQuery();
+            StringBuilder msg = new StringBuilder();
+            while (rs.next()) {
+                msg.append("- ")
+                   .append(rs.getString("nom"))
+                   .append(" : ")
+                   .append(rs.getInt("qte"))
+                   .append("\n");
+            }
+            if (msg.length() > 0) {
+                new AlertMessage().warningMessage("Stock faible (<=10):\n" + msg);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(MedicamentController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
   
    
 }

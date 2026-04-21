@@ -7,6 +7,7 @@ package View;
 
 import Connexion.LaConnexion;
 import Login_Register.AlertMessage;
+import Login_Register.Login_registerController;
 import Models.Patient;
 import java.io.IOException;
 
@@ -131,6 +132,12 @@ public class TableViewController implements Initializable {
 
     @FXML
     private TextField txtTel;
+    
+    @FXML
+    private TextField txtSearchPatient;
+    
+    @FXML
+    private TextField txtSearchMedicament;
     @FXML
     private Button btnRetour;
 
@@ -183,24 +190,85 @@ public class TableViewController implements Initializable {
     void AjouterMedicament() {
         afficherMed.setVisible(true);
          cmbMedicaments.setVisible(false);
-         String nom=txtNom.getText();
-         String prenom=txtPrenom.getText();
-         String tels=txtTel.getText();
-         String adresse=txtTel.getText();
-         int tel = Integer.parseInt(tels);
          String selectedMedication = cmbMedicaments.getValue();
+         if ((selectedMedication == null || selectedMedication.trim().isEmpty()) && cmbMedicaments.getEditor() != null) {
+             selectedMedication = cmbMedicaments.getEditor().getText();
+         }
         AlertMessage alert=new AlertMessage();
-    try { 
-         prepare = con.prepareStatement("INSERT INTO listemedicaments (id_pat, id_med) SELECT p.id, m.id FROM patient p, medicament m WHERE p.nom = ? AND m.nom = ?");
-        prepare.setString(1, nom);
-        prepare.setString(2, selectedMedication);
-        prepare.executeUpdate();
-        alert.sucessMessage("Médicament Ajouté avec succès");
-        table();
-        clearForm();
-     } catch (SQLException ex) {
-         Logger.getLogger(TableViewController.class.getName()).log(Level.SEVERE, null, ex);
-     }
+        int myIndex = TablePatients.getSelectionModel().getSelectedIndex();
+        if (myIndex < 0) {
+            alert.errorMessage("Veuillez sélectionner un patient.");
+            return;
+        }
+        if (selectedMedication == null || selectedMedication.trim().isEmpty()) {
+            alert.errorMessage("Veuillez sélectionner un médicament.");
+            return;
+        }
+        int patientId = TablePatients.getItems().get(myIndex).getId();
+        try {
+            con = LaConnexion.seConnecter();
+            if (con == null) {
+                alert.errorMessage("Connexion base de données indisponible.");
+                return;
+            }
+            con.setAutoCommit(false);
+            PreparedStatement getMedStmt = con.prepareStatement("select id, qte from medicament where nom = ?");
+            getMedStmt.setString(1, selectedMedication);
+            ResultSet medRs = getMedStmt.executeQuery();
+            if (!medRs.next()) {
+                alert.errorMessage("Médicament introuvable.");
+                con.rollback();
+                return;
+            }
+            int medId = medRs.getInt("id");
+            int qte = medRs.getInt("qte");
+            if (qte <= 0) {
+                alert.errorMessage("Stock insuffisant pour ce médicament.");
+                con.rollback();
+                return;
+            }
+
+            PreparedStatement insertStmt = con.prepareStatement("insert into listemedicaments (id_pat, id_med) values (?,?)");
+            insertStmt.setInt(1, patientId);
+            insertStmt.setInt(2, medId);
+            insertStmt.executeUpdate();
+
+            PreparedStatement updateQteStmt = con.prepareStatement("update medicament set qte = qte - 1 where id = ? and qte > 0");
+            updateQteStmt.setInt(1, medId);
+            int updated = updateQteStmt.executeUpdate();
+            if (updated == 0) {
+                alert.errorMessage("Impossible de décrémenter le stock (déjà à 0).");
+                con.rollback();
+                return;
+            }
+
+            con.commit();
+            alert.sucessMessage("Médicament ajouté avec succès au patient.");
+            if (qte - 1 <= 10) {
+                alert.warningMessage("Attention: stock faible pour " + selectedMedication + " (" + (qte - 1) + " restants).");
+            }
+            loadMedicaments();
+            table();
+            clearForm();
+        } catch (SQLException ex) {
+            try {
+                if (con != null) {
+                    con.rollback();
+                }
+            } catch (SQLException rollbackEx) {
+                Logger.getLogger(TableViewController.class.getName()).log(Level.SEVERE, null, rollbackEx);
+            }
+            Logger.getLogger(TableViewController.class.getName()).log(Level.SEVERE, null, ex);
+            alert.errorMessage("Erreur lors de l'ajout du médicament au patient.");
+        } finally {
+            try {
+                if (con != null) {
+                    con.setAutoCommit(true);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(TableViewController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         
 
     }
@@ -374,6 +442,7 @@ public class TableViewController implements Initializable {
     ResultSet result=null;
     Patient patient=null;
     ObservableList<Patient> PatientsList= FXCollections.observableArrayList();
+    private final ObservableList<String> allMedicaments = FXCollections.observableArrayList();
     @FXML
     /*void Refresh() {
      try {
@@ -390,15 +459,21 @@ public class TableViewController implements Initializable {
          Logger.getLogger(TableViewController.class.getName()).log(Level.SEVERE, null, ex);
      }
     }*/
-    public void table()
-      {
+    public void table() {
+        table(txtSearchPatient != null ? txtSearchPatient.getText() : null);
+    }
+    public void table(String searchTerm) {
           con=LaConnexion.seConnecter(); 
        
        try 
        {
          PatientsList.clear();
-         query="select * from patient";
+         boolean hasSearch = searchTerm != null && !searchTerm.trim().isEmpty();
+         query = hasSearch ? "select * from patient where lower(nom) like ? order by id desc" : "select * from patient order by id desc";
          prepare=con.prepareStatement(query);
+         if (hasSearch) {
+             prepare.setString(1, "%" + searchTerm.trim().toLowerCase() + "%");
+         }
          result=prepare.executeQuery();
       {
         while (result.next())
@@ -453,23 +528,57 @@ public class TableViewController implements Initializable {
     private void loadMedicaments() {
         con=LaConnexion.seConnecter(); 
     try {
-        String query = "select nom from medicament";
+        String search = txtSearchMedicament != null ? txtSearchMedicament.getText() : null;
+        boolean hasSearch = search != null && !search.trim().isEmpty();
+        String query = hasSearch ? "select nom from medicament where lower(nom) like ? order by nom" : "select nom from medicament order by nom";
         prepare = con.prepareStatement(query);
-        result = prepare.executeQuery();
-        ObservableList<String> medicationNames = FXCollections.observableArrayList();
-        while (result.next()) {
-            medicationNames.add(result.getString("nom"));
+        if (hasSearch) {
+            prepare.setString(1, "%" + search.trim().toLowerCase() + "%");
         }
-        cmbMedicaments.setItems(medicationNames);
+        result = prepare.executeQuery();
+        allMedicaments.clear();
+        while (result.next()) {
+            allMedicaments.add(result.getString("nom"));
+        }
+        cmbMedicaments.setItems(FXCollections.observableArrayList(allMedicaments));
     } catch (SQLException ex) {
         Logger.getLogger(TableViewController.class.getName()).log(Level.SEVERE, null, ex);
     }
 }
+    
+    private void setupMedicamentsComboSearch() {
+        if (cmbMedicaments == null) {
+            return;
+        }
+        cmbMedicaments.setEditable(true);
+        cmbMedicaments.getEditor().textProperty().addListener((obs, oldV, newV) -> {
+            String typed = newV == null ? "" : newV.trim().toLowerCase();
+            ObservableList<String> filtered = FXCollections.observableArrayList();
+            for (String med : allMedicaments) {
+                if (typed.isEmpty() || med.toLowerCase().contains(typed)) {
+                    filtered.add(med);
+                }
+            }
+            cmbMedicaments.setItems(filtered);
+            cmbMedicaments.show();
+        });
+    }
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //loadData();
+        if (txtSearchPatient != null) {
+            txtSearchPatient.textProperty().addListener((obs, oldV, newV) -> table(newV));
+        }
+        if (txtSearchMedicament != null) {
+            txtSearchMedicament.textProperty().addListener((obs, oldV, newV) -> loadMedicaments());
+        }
+        setupMedicamentsComboSearch();
         loadMedicaments();
         table();
+        if (btnAccueil != null) {
+            boolean isSuperadmin = "superadmin".equalsIgnoreCase(Login_registerController.currentUsername);
+            btnAccueil.setVisible(isSuperadmin);
+            btnAccueil.setManaged(isSuperadmin);
+        }
     }    
    /* public void loadData(){
        //con=LaConnexion.seConnecter();

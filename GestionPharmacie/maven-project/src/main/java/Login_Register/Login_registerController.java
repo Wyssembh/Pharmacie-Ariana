@@ -36,6 +36,7 @@ import javafx.stage.Stage;
 public class Login_registerController implements Initializable {
     // Stocke l'id de l'utilisateur actuellement connecté
     public static int currentUserId = -1;
+    public static String currentUsername = "";
 
       @FXML
     private TextField login_ShowPassword;
@@ -100,7 +101,7 @@ public class Login_registerController implements Initializable {
     
       private static Connection con;
    private static String user="root";
-    private static String password="root";
+    private static String password="";
     
      public  Connection seConnecter(){
         if(con==null){
@@ -123,6 +124,7 @@ public class Login_registerController implements Initializable {
         } else {
             // Cas spécial pour superadmin
             if (username.equals("superadmin") && passwordInput.equals("admin")) {
+                currentUsername = username;
                 alert.sucessMessage("Logged in as superadmin !");
                 // Optionally, you can also log superadmin login in the login table if you want
                 try {
@@ -150,6 +152,8 @@ public class Login_registerController implements Initializable {
                     if (hashedPasswordDB.equals(hashedPasswordInput)) {
                         // Stocke l'id de l'utilisateur connecté
                         currentUserId = userId;
+                        currentUsername = username;
+                        System.out.println("Current username: " + currentUsername);
                         // Insertion dans la table login
                         try {
                             String insertLogin = "INSERT INTO login (date_login, id_user) VALUES (CURRENT_TIMESTAMP, ?)";

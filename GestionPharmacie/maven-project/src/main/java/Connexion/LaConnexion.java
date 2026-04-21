@@ -20,9 +20,9 @@ import java.sql.SQLException;
 public class LaConnexion {
     private static Connection con;
    private static String user="root";
-    private static String password="root";
+    private static String password="";
     
-    public static Connection seConnecter(){
+    /*public static Connection seConnecter(){
         if(con==null){
             try {
                 String host = System.getenv("DB_HOST") != null ? System.getenv("DB_HOST") : "localhost";
@@ -34,5 +34,18 @@ public class LaConnexion {
             }
         }
      return con;
+    }*/
+    public static Connection seConnecter(){
+        if(con==null){
+            try {
+                con=DriverManager.getConnection("jdbc:mysql://localhost:3306/pharmacie",user,password);
+                System.out.println("Connexion établie");
+            }
+            catch(SQLException ex){
+                System.out.println("Bd non trouvé ou problème d'identification "+ex.getMessage());
+            }
+        }
+     return con;
     }
+
 }

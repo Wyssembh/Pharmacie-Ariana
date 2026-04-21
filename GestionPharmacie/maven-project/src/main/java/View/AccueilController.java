@@ -14,6 +14,8 @@ public class AccueilController {
     private Button buttonMed;
     @FXML
     private Button buttonPat;
+    @FXML
+    private Button buttonDash;
 
     @FXML
     private void handleButtonMed(ActionEvent event) {
@@ -68,6 +70,19 @@ public class AccueilController {
             Scene loginScene = new Scene(loginParent);
             Stage stage = (Stage) buttonUsers.getScene().getWindow();
             stage.setScene(loginScene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleButtonDash(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/dashboard.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) buttonDash.getScene().getWindow();
+            stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

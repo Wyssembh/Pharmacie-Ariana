@@ -1,8 +1,9 @@
-View/MedicamentController.class
-Login_Register/Launch.class
-View/TableViewController.class
-Login_Register/AlertMessage.class
-Models/Medicament.class
-Models/Patient.class
-Connexion/LaConnexion.class
-Login_Register/Login_registerController.class
+Models\Patient.class
+Models\Medicament.class
+Connexion\LaConnexion.class
+Login_Register\Login_registerController.class
+Login_Register\Launch.class
+View\DashboardController.class
+Login_Register\AlertMessage.class
+View\TableViewController.class
+View\MedicamentController.class

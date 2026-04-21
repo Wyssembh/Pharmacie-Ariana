@@ -17,7 +17,7 @@
            <Button fx:id="buttonPat" layoutX="62.0" layoutY="390.0" mnemonicParsing="false" onAction="#handleButtonPat" style="-fx-background-color: green;" text="consulter patient " textFill="WHITE" />
            <Button fx:id="buttonMed" layoutX="307.0" layoutY="390.0" mnemonicParsing="false" onAction="#handleButtonMed" style="-fx-background-color: green;" text="consulter médicament" textFill="WHITE" />
             <Button fx:id="buttonUsers" layoutX="556.0" layoutY="390.0" mnemonicParsing="false" onAction="#handleButtonUsers" style="-fx-background-color: green;" text="gestion des utilisateurs" textFill="WHITE" />
-            <Button fx:id="buttonDash" layoutX="840.0" layoutY="390.0" mnemonicParsing="false" onAction="#handleButtonMed" style="-fx-background-color: green;" text="dashboard" textFill="WHITE" />
+            <Button fx:id="buttonDash" layoutX="840.0" layoutY="390.0" mnemonicParsing="false" onAction="#handleButtonDash" style="-fx-background-color: green;" text="dashboard" textFill="WHITE" />
             <Button fx:id="buttonLogout" layoutX="848.0" layoutY="510.0" mnemonicParsing="false" onAction="#handleButtonLogout" style="-fx-background-color: red;" text="Déconnexion" textFill="WHITE" />
          </children>
       </AnchorPane>

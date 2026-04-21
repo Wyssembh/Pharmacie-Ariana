@@ -30,5 +30,13 @@ public class AlertMessage {
         alert.showAndWait();
     }
 
+    public void warningMessage(String message){
+        alert=new Alert(AlertType.WARNING);
+        alert.setTitle("Warning message");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
    
 }
