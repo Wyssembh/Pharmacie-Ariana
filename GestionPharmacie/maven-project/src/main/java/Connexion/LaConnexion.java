@@ -20,7 +20,7 @@ import java.sql.SQLException;
 public class LaConnexion {
     private static Connection con;
    private static String user="root";
-    private static String password="";
+    private static String password="root";
     
     /*public static Connection seConnecter(){
         if(con==null){

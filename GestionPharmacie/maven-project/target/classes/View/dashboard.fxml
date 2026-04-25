@@ -19,18 +19,18 @@
       <Button fx:id="btnRetourAccueil" layoutX="964.0" layoutY="25.0" mnemonicParsing="false" onAction="#goAccueil" prefHeight="30.0" prefWidth="110.0" styleClass="back-btn" text="Accueil" />
       <BarChart fx:id="patientMedicamentsChart" layoutX="38.0" layoutY="78.0" prefHeight="280.0" prefWidth="500.0" title="Patients / Nombre de medicaments">
          <xAxis>
-            <CategoryAxis label="Patients" />
+            <CategoryAxis label="Patients" tickLabelFill="WHITE" />
          </xAxis>
          <yAxis>
-            <NumberAxis label="Nb medicaments" />
+            <NumberAxis label="Nb medicaments" prefHeight="176.0" prefWidth="65.0" tickLabelFill="WHITE" />
          </yAxis>
       </BarChart>
       <BarChart fx:id="medicamentQteChart" layoutX="562.0" layoutY="78.0" prefHeight="280.0" prefWidth="512.0" title="Medicaments / Quantite">
          <xAxis>
-            <CategoryAxis label="Medicaments" />
+            <CategoryAxis label="Medicaments" tickLabelFill="WHITE" />
          </xAxis>
          <yAxis>
-            <NumberAxis label="Quantite" />
+            <NumberAxis label="Quantite" tickLabelFill="WHITE" />
          </yAxis>
       </BarChart>
       <PieChart fx:id="topUsersChart" layoutX="14.0" layoutY="385.0" prefHeight="280.0" prefWidth="488.0" title="Utilisateurs qui se connectent le plus" />
