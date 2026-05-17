@@ -308,7 +308,7 @@ public class MedicamentController implements Initializable {
     
     
       }
-       @FXML
+    @FXML
     void Redirect() {
      try {
          FXMLLoader loader = new FXMLLoader(getClass().getResource("TableView.fxml"));

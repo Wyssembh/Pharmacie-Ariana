@@ -101,7 +101,7 @@ public class Login_registerController implements Initializable {
     
       private static Connection con;
    private static String user="root";
-    private static String password="root";
+    private static String password="";
     
      public  Connection seConnecter(){
         if(con==null){
