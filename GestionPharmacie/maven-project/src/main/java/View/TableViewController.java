@@ -154,7 +154,7 @@ public class TableViewController implements Initializable {
          String nom=txtNom.getText();
          String prenom=txtPrenom.getText();
          String tels=txtTel.getText();
-         String adresse=txtTel.getText();
+         String adresse=txtAdresse.getText();
          int tel = Integer.parseInt(tels);
         AlertMessage alert=new AlertMessage();
     try { 
@@ -300,7 +300,7 @@ public class TableViewController implements Initializable {
     } catch (SQLException ex) {
         Logger.getLogger(TableViewController.class.getName()).log(Level.SEVERE, null, ex);
     }
-}
+    }
 
     @FXML
     void onCLick() {
